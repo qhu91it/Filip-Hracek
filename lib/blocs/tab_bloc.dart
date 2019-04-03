@@ -8,7 +8,6 @@ class TabBloc extends StatesRebuilder {
 
   PageController tabController;
 
-  int _page;
   AppTab _tab;
   get activeTab => _tab;
   int get activeIndex {
@@ -24,30 +23,25 @@ class TabBloc extends StatesRebuilder {
 
   TabBloc() : super() {
     _tab = AppTab.cart;
-    _page = 0;
-    tabController = PageController()..addListener(_scrollListener);
+    tabController = PageController();
   }
 
-  void _scrollListener() {
-    int page = tabController.page.round();
-    if (_page != page) {
-      _page = page;
-      switch (page) {
-        case 0:
-          _tab = AppTab.cart;
-          break;
-        case 1:
-          _tab = AppTab.stats;
-          break;
-      }
-      rebuildStates(ids: ["tabState"]);
-    }
-  }
-
-  updateTab(AppTab tab) {
+  moveTab(AppTab tab) {
     _tab = tab;
     tabController.animateToPage(activeIndex, duration: kTabScrollDuration, curve: Curves.ease);
-    rebuildStates(ids: ["tabState", "tabBodyState"]);
+    rebuildStates(ids: ["tabState"]);
+  }
+
+  updateTabAtPage(int page) {
+    switch (page) {
+      case 0:
+        _tab = AppTab.cart;
+        break;
+      case 1:
+        _tab = AppTab.stats;
+        break;
+    }
+    rebuildStates(ids: ["tabState"]);
   }
 
   @override

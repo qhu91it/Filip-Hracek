@@ -44,13 +44,19 @@ class CartPage extends StatelessWidget {
               CartButton(cardName: "1")
             ]
         ),
-        body: PageView(
+        body: PageView.builder(
+          controller: tabBloc.tabController,
+          itemCount: _children.length,
+          itemBuilder: (context, page) => _children[page],
+          onPageChanged: (page) => tabBloc.updateTabAtPage(page),
+        ), /*PageView(
           controller: tabBloc.tabController,
           children: _children,
-        ), /*StateBuilder(
+          onPageChanged: (page) => tabBloc.updateTabAtPage(page)
+        )*/ /*StateBuilder(
         stateID: "tabBodyState",
         blocs: [tabBloc],
-        builder: (_) => _children[tabBloc.activeIndex],//_dynamicBody(),
+        builder: (_) => _children[tabBloc.activeIndex],
       ),*/
         bottomNavigationBar: TabBody(),
       ),
@@ -71,13 +77,13 @@ class CartPageBody extends StatelessWidget {
       stateID: "cartPageBodyState",
       blocs: [mainBloc],
       builder: (_) => mainBloc.items.isEmpty
-          ? Center(
-              child: Text('Empty', style: Theme.of(context).textTheme.display1),
-            )
-          : ListView.builder(
-              itemCount: mainBloc.items.length,
-              itemBuilder: (_, index) => ItemTile(index),
-            ),
+        ? Center(
+            child: Text('Empty', style: Theme.of(context).textTheme.display1),
+          )
+        : ListView.builder(
+            itemCount: mainBloc.items.length,
+            itemBuilder: (_, index) => ItemTile(index),
+          ),
     );
   }
 }
@@ -105,7 +111,7 @@ class TabBody extends StatelessWidget {
       blocs: [tabBloc],
       builder: (_) => TabSelector(
         activeTab: tabBloc.activeTab,
-        onTabSelected: (tab) => tabBloc.updateTab(tab),
+        onTabSelected: (tab) => tabBloc.moveTab(tab),
       ),
     );
   }
@@ -127,19 +133,22 @@ class ItemTile extends StatelessWidget {
 
     return StateBuilder(
       builder: (state) => Container(
-            color: mainBloc.items[index].product.color,
-            child: ListTile(
-              title: Text(
-                mainBloc.items[index].product.name,
-                style: textStyle,
-              ),
-              trailing: CircleAvatar(
-                  backgroundColor: const Color(0x33FFFFFF),
-                  child: Text(mainBloc.items[index].count.toString(),
-                      style: textStyle)),
-              onTap: () => mainBloc.cartRemoval(mainBloc.items[index], state),
-            ),
+        color: mainBloc.items[index].product.color,
+        child: ListTile(
+          title: Text(
+            mainBloc.items[index].product.name,
+            style: textStyle,
           ),
+          trailing: CircleAvatar(
+            backgroundColor: const Color(0x33FFFFFF),
+            child: Text(
+              mainBloc.items[index].count.toString(),
+              style: textStyle
+            )
+          ),
+          onTap: () => mainBloc.cartRemoval(mainBloc.items[index], state),
+        ),
+      ),
     );
   }
 }
