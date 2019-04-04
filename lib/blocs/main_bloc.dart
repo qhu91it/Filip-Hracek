@@ -39,6 +39,11 @@ class MainBloc extends StatesRebuilder {
   }
 
   getIcon() => (itemCount > 2) ? Icon(Icons.add) : Text("noop");
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
+    return super.toString();
+  }
 }
 
-//MainBloc mainBloc;
+MainBloc mainBloc;

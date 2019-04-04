@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:animator/animator.dart';
 import 'package:states_rebuilder/states_rebuilder.dart';
 import '../../blocs/main_bloc.dart';
-import '../../blocs/bloc_provider.dart';
 
 class CartButton extends StatelessWidget {
   final String cardName;
@@ -21,10 +20,9 @@ class CartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mainBloc = BlocProvider.of<MainBloc>(context);
     return StateBuilder(
       stateID: "cartButtonState_$cardName",
-      blocs: [mainBloc,],
+      blocs: [mainBloc],
       builder: (_) {
         return IconButton(
           icon: Stack(
@@ -41,20 +39,20 @@ class CartButton extends StatelessWidget {
                   builder: (anim) => SlideTransition(
                     position: anim,
                     child: Material(
-                        type: MaterialType.circle,
-                        elevation: 2.0,
-                        color: Colors.red,
-                        child: Padding(
-                          padding: const EdgeInsets.all(5.0),
-                          child: Text(
-                            mainBloc.itemCount.toString(),
-                            style: TextStyle(
-                              fontSize: 13.0,
-                              color: badgeTextColor,
-                              fontWeight: FontWeight.bold,
-                            ),
+                      type: MaterialType.circle,
+                      elevation: 2.0,
+                      color: Colors.red,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Text(
+                          mainBloc.itemCount.toString(),
+                          style: TextStyle(
+                            fontSize: 13.0,
+                            color: badgeTextColor,
+                            fontWeight: FontWeight.bold,
                           ),
-                        )
+                        ),
+                      )
                     ),
                   ),
                 )

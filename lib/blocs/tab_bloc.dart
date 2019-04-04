@@ -52,6 +52,10 @@ class TabBloc extends StatesRebuilder {
     }
   }
 
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.debug}) {
+    return super.toString();
+  }
 }
 
-//TabBloc tabBloc;
+TabBloc tabBloc;

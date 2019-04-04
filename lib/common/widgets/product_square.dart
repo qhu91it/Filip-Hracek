@@ -3,7 +3,6 @@ import 'package:meta/meta.dart';
 import '../models/product.dart';
 import '../utils/is_dark.dart';
 
-import '../../blocs/bloc_provider.dart';
 import '../../blocs/main_bloc.dart';
 
 class ProductSquare extends StatelessWidget {
@@ -16,17 +15,18 @@ class ProductSquare extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mainBloc = BlocProvider.of<MainBloc>(context);
     return Material(
       color: product.color,
       child: InkWell(
         onTap: () => mainBloc.cartAddition(product),
         child: Center(
-            child: Text(
-          product.name,
-          style: TextStyle(
-              color: isDark(product.color) ? Colors.white : Colors.black),
-        )),
+          child: Text(
+            product.name,
+            style: TextStyle(
+              color: isDark(product.color) ? Colors.white : Colors.black
+            ),
+          )
+        ),
       ),
     );
   }

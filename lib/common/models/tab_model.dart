@@ -6,4 +6,9 @@ class TabModel {
   static final tabKey = const Key('TabKey');
   static final tabCartKey = const Key('TabCartKey');
   static final tabStatsKey = const Key('TabStatsKey');
+
+  @override
+  String toString() {
+    return super.toString();
+  }
 }

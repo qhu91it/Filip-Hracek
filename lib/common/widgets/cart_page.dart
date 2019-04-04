@@ -3,10 +3,8 @@ import 'package:flutter/material.dart';
 import '../utils/is_dark.dart';
 
 import 'package:states_rebuilder/states_rebuilder.dart';
-import '../../blocs/bloc_provider.dart';
 import '../../blocs/main_bloc.dart';
 import '../../blocs/tab_bloc.dart';
-import '../../blocs/animation_bloc.dart';
 import '../../common/widgets/cart_button.dart';
 import 'tab_selector.dart';
 
@@ -33,10 +31,8 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final tabBloc = BlocProvider.of<TabBloc>(context);
     return StateBuilder(
       blocs: [tabBloc],
-      dispose: (_) => tabBloc.dispose(),
       builder: (_) => Scaffold(
         appBar: AppBar(
           title: Text("Your Cart"),
@@ -64,48 +60,110 @@ class CartPage extends StatelessWidget {
   }
 }
 
-class CartPageBody extends StatelessWidget {
-  CartPageBody() : super() {
-    print("CartPageBody init");
+class CartPageBody extends StatefulWidget {
+  @override
+  _CartPageBodyState createState() => _CartPageBodyState();
+}
+
+class _CartPageBodyState extends State<CartPageBody> with AutomaticKeepAliveClientMixin<CartPageBody> {
+
+  @override
+  void initState() {
+    print("_CartPageBodyState initState");
+    super.initState();
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
-    final mainBloc = BlocProvider.of<MainBloc>(context);
+    print("_CartPageBodyState build");
     return StateBuilder(
-      key: PageStorageKey<String>("CartPageBody"),
       stateID: "cartPageBodyState",
       blocs: [mainBloc],
       builder: (_) => mainBloc.items.isEmpty
         ? Center(
-            child: Text('Empty', style: Theme.of(context).textTheme.display1),
-          )
+          child: Text('Empty', style: Theme.of(context).textTheme.display1),
+        )
         : ListView.builder(
-            itemCount: mainBloc.items.length,
-            itemBuilder: (_, index) => ItemTile(index),
-          ),
+          physics: const AlwaysScrollableScrollPhysics(),
+          itemCount: mainBloc.items.length,
+          itemBuilder: (_, index) => ItemTile(index),
+        ),
     );
   }
 }
 
-class StatsBodyPage extends StatelessWidget {
-  StatsBodyPage() : super() {
-    print("StatsBodyPage init");
+//class CartPageBody extends StatelessWidget {
+//  CartPageBody() : super() {
+//    print("CartPageBody init");
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    print("CartPageBody build");
+//    return StateBuilder(
+//      key: PageStorageKey<String>("CartPageBody"),
+//      stateID: "cartPageBodyState",
+//      blocs: [mainBloc],
+//      builder: (_) => mainBloc.items.isEmpty
+//        ? Center(
+//            child: Text('Empty', style: Theme.of(context).textTheme.display1),
+//          )
+//        : ListView.builder(
+//            physics: const AlwaysScrollableScrollPhysics(),
+//            itemCount: mainBloc.items.length,
+//            itemBuilder: (_, index) => ItemTile(index),
+//          ),
+//    );
+//  }
+//}
+
+class StatsBodyPage extends StatefulWidget {
+  @override
+  _StatsBodyPageState createState() => _StatsBodyPageState();
+}
+
+class _StatsBodyPageState extends State<StatsBodyPage> with AutomaticKeepAliveClientMixin<StatsBodyPage> {
+
+  @override
+  void initState() {
+    print("_StatsBodyPageState initState");
+    super.initState();
   }
 
   @override
+  bool get wantKeepAlive => true;
+
+  @override
   Widget build(BuildContext context) {
+    print("_StatsBodyPageState build");
     return Center(
-      key: PageStorageKey<String>("StatsBodyPage"),
       child: Text("AAAAA"),
     );
   }
 }
 
+
+//class StatsBodyPage extends StatelessWidget {
+//  StatsBodyPage() : super() {
+//    print("StatsBodyPage init");
+//  }
+//
+//  @override
+//  Widget build(BuildContext context) {
+//    print("StatsBodyPage build");
+//    return Center(
+//      key: PageStorageKey<String>("StatsBodyPage"),
+//      child: Text("AAAAA"),
+//    );
+//  }
+//}
+
 class TabBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final tabBloc = BlocProvider.of<TabBloc>(context);
     return StateBuilder(
       stateID: "tabState",
       blocs: [tabBloc],
@@ -124,14 +182,14 @@ class ItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final mainBloc = BlocProvider.of<MainBloc>(context);
 
     final textStyle = TextStyle(
-        color: isDark(mainBloc.items[index].product.color)
-            ? Colors.white
-            : Colors.black);
+      color: isDark(mainBloc.items[index].product.color)
+        ? Colors.white
+        : Colors.black);
 
     return StateBuilder(
+      blocs: [mainBloc],
       builder: (state) => Container(
         color: mainBloc.items[index].product.color,
         child: ListTile(

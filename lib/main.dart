@@ -5,30 +5,28 @@ import 'common/widgets/product_square.dart';
 import 'common/widgets/theme.dart';
 
 import 'package:states_rebuilder/states_rebuilder.dart';
-import 'blocs/bloc_provider.dart';
 import 'blocs/main_bloc.dart';
 import 'blocs/tab_bloc.dart';
 
-main() {
-  return runApp(MyApp());
-}
+void main() => runApp(
+  StateBuilder(
+    initState: (_) => { mainBloc = MainBloc(), tabBloc = TabBloc() },
+    dispose: (_) => { mainBloc = null, tabBloc.dispose(), tabBloc = null },
+    builder: (_) => MyApp(),
+  ),
+);
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider<MainBloc>(
-      bloc: MainBloc(),
-      child: MaterialApp(
-        title: 'SetState',
-        theme: appTheme,
-        home: MyHomePage(),
-        routes: <String, WidgetBuilder>{
-          "/cart": (context) => BlocProvider<TabBloc>(
-            bloc: TabBloc(),
-            child: CartPage(),
-          ),
-        },
-      ),
+    print("MyApp build");
+    return MaterialApp(
+      title: 'SetState',
+      theme: appTheme,
+      home: MyHomePage(),
+      routes: <String, WidgetBuilder>{
+        "/cart": (context) => CartPage()
+      },
     );
   }
 }
@@ -37,6 +35,7 @@ class MyApp extends StatelessWidget {
 class MyHomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    print("MyHomePage build");
     return Scaffold(
       appBar: AppBar(
         title: Text("Bloc"),
@@ -53,23 +52,24 @@ class MyHomePage extends StatelessWidget {
 class ProductGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final mainBloc = BlocProvider.of<MainBloc>(context);
+    print("ProductGrid build");
     return StateBuilder(
       initState: (state) => mainBloc.init(state),
       builder: (_) => mainBloc.isLoaded
-          ? GridView.count(
-              crossAxisCount: 2,
-              children: mainBloc.products.map(
-                (product) {
-                  return ProductSquare(
-                    product: product,
-                  );
-                },
-              ).toList(),
-            )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
+        ? GridView.count(
+            physics: const AlwaysScrollableScrollPhysics(),
+            crossAxisCount: 2,
+            children: mainBloc.products.map(
+              (product) {
+                return ProductSquare(
+                  product: product,
+                );
+              },
+            ).toList(),
+          )
+        : Center(
+            child: CircularProgressIndicator(),
+          ),
     );
   }
 }
