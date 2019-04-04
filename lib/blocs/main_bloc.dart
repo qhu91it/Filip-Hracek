@@ -46,4 +46,4 @@ class MainBloc extends StatesRebuilder {
   }
 }
 
-MainBloc mainBloc;
+//MainBloc mainBloc;

@@ -58,4 +58,4 @@ class TabBloc extends StatesRebuilder {
   }
 }
 
-TabBloc tabBloc;
+//TabBloc tabBloc;

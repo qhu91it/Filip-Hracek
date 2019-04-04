@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../utils/is_dark.dart';
 
-import 'package:states_rebuilder/states_rebuilder.dart';
+import '../../blocs/bloc.dart';
 import '../../blocs/main_bloc.dart';
 import '../../blocs/tab_bloc.dart';
 import '../../common/widgets/cart_button.dart';
@@ -31,8 +31,11 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print("CartPage build");
+    final TabBloc _tabBloc = BlocProvider.of<TabBloc>(context);
     return StateBuilder(
-      blocs: [tabBloc],
+      blocs: [_tabBloc],
+      dispose: (_) => _tabBloc.dispose(),
       builder: (_) => Scaffold(
         appBar: AppBar(
           title: Text("Your Cart"),
@@ -41,18 +44,18 @@ class CartPage extends StatelessWidget {
             ]
         ),
         body: PageView.builder(
-          controller: tabBloc.tabController,
+          controller: _tabBloc.tabController,
           itemCount: _children.length,
           itemBuilder: (context, page) => _children[page],
-          onPageChanged: (page) => tabBloc.updateTabAtPage(page),
+          onPageChanged: (page) => _tabBloc.updateTabAtPage(page),
         ), /*PageView(
-          controller: tabBloc.tabController,
+          controller: _tabBloc.tabController,
           children: _children,
-          onPageChanged: (page) => tabBloc.updateTabAtPage(page)
+          onPageChanged: (page) => _tabBloc.updateTabAtPage(page)
         )*/ /*StateBuilder(
         stateID: "tabBodyState",
-        blocs: [tabBloc],
-        builder: (_) => _children[tabBloc.activeIndex],
+        blocs: [_tabBloc],
+        builder: (_) => _children[_tabBloc.activeIndex],
       ),*/
         bottomNavigationBar: TabBody(),
       ),
@@ -79,16 +82,17 @@ class _CartPageBodyState extends State<CartPageBody> with AutomaticKeepAliveClie
   @override
   Widget build(BuildContext context) {
     print("_CartPageBodyState build");
+    final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
     return StateBuilder(
       stateID: "cartPageBodyState",
-      blocs: [mainBloc],
-      builder: (_) => mainBloc.items.isEmpty
+      blocs: [_mainBloc],
+      builder: (_) => _mainBloc.items.isEmpty
         ? Center(
           child: Text('Empty', style: Theme.of(context).textTheme.display1),
         )
         : ListView.builder(
           physics: const AlwaysScrollableScrollPhysics(),
-          itemCount: mainBloc.items.length,
+          itemCount: _mainBloc.items.length,
           itemBuilder: (_, index) => ItemTile(index),
         ),
     );
@@ -162,14 +166,16 @@ class _StatsBodyPageState extends State<StatsBodyPage> with AutomaticKeepAliveCl
 //}
 
 class TabBody extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+    final TabBloc _tabBloc = BlocProvider.of<TabBloc>(context);
     return StateBuilder(
       stateID: "tabState",
-      blocs: [tabBloc],
+      blocs: [_tabBloc],
       builder: (_) => TabSelector(
-        activeTab: tabBloc.activeTab,
-        onTabSelected: (tab) => tabBloc.moveTab(tab),
+        activeTab: _tabBloc.activeTab,
+        onTabSelected: (tab) => _tabBloc.moveTab(tab),
       ),
     );
   }
@@ -182,29 +188,29 @@ class ItemTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
     final textStyle = TextStyle(
-      color: isDark(mainBloc.items[index].product.color)
+      color: isDark(_mainBloc.items[index].product.color)
         ? Colors.white
         : Colors.black);
 
     return StateBuilder(
-      blocs: [mainBloc],
+      blocs: [_mainBloc],
       builder: (state) => Container(
-        color: mainBloc.items[index].product.color,
+        color: _mainBloc.items[index].product.color,
         child: ListTile(
           title: Text(
-            mainBloc.items[index].product.name,
+            _mainBloc.items[index].product.name,
             style: textStyle,
           ),
           trailing: CircleAvatar(
             backgroundColor: const Color(0x33FFFFFF),
             child: Text(
-              mainBloc.items[index].count.toString(),
+                _mainBloc.items[index].count.toString(),
               style: textStyle
             )
           ),
-          onTap: () => mainBloc.cartRemoval(mainBloc.items[index], state),
+          onTap: () => _mainBloc.cartRemoval(_mainBloc.items[index], state),
         ),
       ),
     );

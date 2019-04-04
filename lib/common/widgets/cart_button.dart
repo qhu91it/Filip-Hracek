@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:animator/animator.dart';
-import 'package:states_rebuilder/states_rebuilder.dart';
+import '../../blocs/bloc.dart';
 import '../../blocs/main_bloc.dart';
 
 class CartButton extends StatelessWidget {
@@ -20,9 +20,10 @@ class CartButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
     return StateBuilder(
       stateID: "cartButtonState_$cardName",
-      blocs: [mainBloc],
+      blocs: [_mainBloc],
       builder: (_) {
         return IconButton(
           icon: Stack(
@@ -45,7 +46,7 @@ class CartButton extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: Text(
-                          mainBloc.itemCount.toString(),
+                          _mainBloc.itemCount.toString(),
                           style: TextStyle(
                             fontSize: 13.0,
                             color: badgeTextColor,

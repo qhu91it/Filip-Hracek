@@ -4,29 +4,36 @@ import 'common/widgets/cart_button.dart';
 import 'common/widgets/product_square.dart';
 import 'common/widgets/theme.dart';
 
-import 'package:states_rebuilder/states_rebuilder.dart';
+import 'blocs/bloc.dart';
 import 'blocs/main_bloc.dart';
 import 'blocs/tab_bloc.dart';
 
 void main() => runApp(
-  StateBuilder(
-    initState: (_) => { mainBloc = MainBloc(), tabBloc = TabBloc() },
-    dispose: (_) => { mainBloc = null, tabBloc.dispose(), tabBloc = null },
-    builder: (_) => MyApp(),
-  ),
+    MyApp()
+//  StateBuilder(
+//    initState: (_) => { mainBloc = MainBloc(), tabBloc = TabBloc() },
+//    dispose: (_) => { mainBloc = null, tabBloc.dispose(), tabBloc = null },
+//    builder: (_) => MyApp(),
+//  ),
 );
 
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("MyApp build");
-    return MaterialApp(
-      title: 'SetState',
-      theme: appTheme,
-      home: MyHomePage(),
-      routes: <String, WidgetBuilder>{
-        "/cart": (context) => CartPage()
-      },
+    return BlocProvider(
+      bloc: MainBloc(),
+      child: MaterialApp(
+        title: 'SetState',
+        theme: appTheme,
+        home: MyHomePage(),
+        routes: <String, WidgetBuilder>{
+          "/cart": (context) => BlocProvider(
+            bloc: TabBloc(),
+            child: CartPage()
+          )
+        },
+      )
     );
   }
 }
@@ -53,13 +60,15 @@ class ProductGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("ProductGrid build");
+    final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
+
     return StateBuilder(
-      initState: (state) => mainBloc.init(state),
-      builder: (_) => mainBloc.isLoaded
+      initState: (state) => _mainBloc.init(state),
+      builder: (_) => _mainBloc.isLoaded
         ? GridView.count(
             physics: const AlwaysScrollableScrollPhysics(),
             crossAxisCount: 2,
-            children: mainBloc.products.map(
+            children: _mainBloc.products.map(
               (product) {
                 return ProductSquare(
                   product: product,
