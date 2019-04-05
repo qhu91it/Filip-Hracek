@@ -18,11 +18,13 @@ void main() => runApp(
 );
 
 class MyApp extends StatelessWidget {
+  final mainBloc = MainBloc();
+
   @override
   Widget build(BuildContext context) {
     print("MyApp build");
     return BlocProvider(
-      bloc: MainBloc(),
+      bloc: mainBloc,
       child: MaterialApp(
         title: 'SetState',
         theme: appTheme,
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           "/cart": (context) => BlocProvider(
             bloc: TabBloc(),
-            child: CartPage()
+            child: CartPage(mainBloc.pageCount)
           )
         },
       )

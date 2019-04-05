@@ -60,7 +60,10 @@ class CartButton extends StatelessWidget {
               ),
             ],
           ),
-          onPressed: () => Navigator.of(context).pushNamed("/cart"),
+          onPressed: () => {
+            _mainBloc.pageCount += 1,
+            Navigator.of(context).pushNamed("/cart")
+          },
         );
       },
     );

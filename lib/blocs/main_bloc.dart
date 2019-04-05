@@ -12,6 +12,7 @@ class MainBloc extends StatesRebuilder {
   List<CartItem> items = <CartItem>[];
   int itemCount = 0;
   bool isLoaded = false;
+  int pageCount = 0;
 
   final cart = Cart();
 

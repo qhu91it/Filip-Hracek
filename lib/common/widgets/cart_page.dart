@@ -9,45 +9,43 @@ import '../../common/widgets/cart_button.dart';
 import 'tab_selector.dart';
 
 class CartPage extends StatelessWidget {
-
-  final List<Widget> _children = <Widget>[
-    CartPageBody(),
-    StatsBodyPage()
-//    Offstage(
-//      offstage: tabBloc.activeIndex() != 0,
-//      child: TickerMode(
-//        enabled: tabBloc.activeIndex() == 0,
-//        child: CartPageBody(),
-//      ),
-//    ),
-//    Offstage(
-//      offstage: tabBloc.activeIndex() != 1,
-//      child: TickerMode(
-//        enabled: tabBloc.activeIndex() == 1,
-//        child: StatsBodyPage(),
-//      ),
-//    ),
-  ];
+  final int page;
+  CartPage(this.page) : super();
 
   @override
   Widget build(BuildContext context) {
     print("CartPage build");
     final TabBloc _tabBloc = BlocProvider.of<TabBloc>(context);
+    final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
+
+    final List<Widget> _children = <Widget>[
+      CartPageBody(page),
+      StatsBodyPage(page)
+    ];
+
     return StateBuilder(
-      blocs: [_tabBloc],
-      dispose: (_) => _tabBloc.dispose(),
+      blocs: [_mainBloc, _tabBloc],
+      dispose: (_) => {
+        _tabBloc.dispose()
+      },
       builder: (_) => Scaffold(
         appBar: AppBar(
           title: Text("Your Cart"),
             actions: <Widget>[
-              CartButton(cardName: "1")
+              CartButton(cardName: "$page")
             ]
         ),
-        body: PageView.builder(
-          controller: _tabBloc.tabController,
-          itemCount: _children.length,
-          itemBuilder: (context, page) => _children[page],
-          onPageChanged: (page) => _tabBloc.updateTabAtPage(page),
+        body: WillPopScope(
+          child: PageView.builder(
+            controller: _tabBloc.tabController,
+            itemCount: _children.length,
+            itemBuilder: (context, page) => _children[page],
+              onPageChanged: (page) => _tabBloc.updateTabAtPage(page),
+          ),
+          onWillPop: () async {
+            _mainBloc.pageCount -= 1;
+            return true;
+          }
         ), /*PageView(
           controller: _tabBloc.tabController,
           children: _children,
@@ -64,6 +62,9 @@ class CartPage extends StatelessWidget {
 }
 
 class CartPageBody extends StatefulWidget {
+  final int page;
+  CartPageBody(this.page) : super();
+
   @override
   _CartPageBodyState createState() => _CartPageBodyState();
 }
@@ -81,9 +82,13 @@ class _CartPageBodyState extends State<CartPageBody> with AutomaticKeepAliveClie
 
   @override
   Widget build(BuildContext context) {
-    print("_CartPageBodyState build");
     final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
+    if (_mainBloc.pageCount > widget.page) {
+      return Container();
+    }
+    print("_CartPageBodyState build");
     return StateBuilder(
+      key: PageStorageKey<String>("CartPageBody"),
       stateID: "cartPageBodyState",
       blocs: [_mainBloc],
       builder: (_) => _mainBloc.items.isEmpty
@@ -107,17 +112,18 @@ class _CartPageBodyState extends State<CartPageBody> with AutomaticKeepAliveClie
 //  @override
 //  Widget build(BuildContext context) {
 //    print("CartPageBody build");
+//    final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
 //    return StateBuilder(
 //      key: PageStorageKey<String>("CartPageBody"),
 //      stateID: "cartPageBodyState",
-//      blocs: [mainBloc],
-//      builder: (_) => mainBloc.items.isEmpty
+//      blocs: [_mainBloc],
+//      builder: (_) => _mainBloc.items.isEmpty
 //        ? Center(
 //            child: Text('Empty', style: Theme.of(context).textTheme.display1),
 //          )
 //        : ListView.builder(
 //            physics: const AlwaysScrollableScrollPhysics(),
-//            itemCount: mainBloc.items.length,
+//            itemCount: _mainBloc.items.length,
 //            itemBuilder: (_, index) => ItemTile(index),
 //          ),
 //    );
@@ -125,6 +131,9 @@ class _CartPageBodyState extends State<CartPageBody> with AutomaticKeepAliveClie
 //}
 
 class StatsBodyPage extends StatefulWidget {
+  final int page;
+  StatsBodyPage(this.page) : super();
+
   @override
   _StatsBodyPageState createState() => _StatsBodyPageState();
 }
@@ -142,6 +151,10 @@ class _StatsBodyPageState extends State<StatsBodyPage> with AutomaticKeepAliveCl
 
   @override
   Widget build(BuildContext context) {
+    final MainBloc _mainBloc = BlocProvider.of<MainBloc>(context);
+    if (_mainBloc.pageCount > widget.page) {
+      return Container();
+    }
     print("_StatsBodyPageState build");
     return Center(
       child: Text("AAAAA"),
